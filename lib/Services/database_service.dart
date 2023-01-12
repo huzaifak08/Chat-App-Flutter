@@ -56,4 +56,29 @@ class DatabaseService {
           FieldValue.arrayUnion(["${groupDocumentReference.id}_$groupName"])
     });
   }
+
+  // Getting the Chats:
+  getChats(String groupId) async {
+    return groupsCollection
+        .doc(groupId)
+        .collection('messages')
+        .orderBy('time')
+        .snapshots();
+  }
+
+  Future getGroupAdmin(String groupId) async {
+    DocumentReference d = groupsCollection.doc(groupId);
+    DocumentSnapshot documentSnapshot = await d.get();
+    return documentSnapshot['admin'];
+  }
+
+  // Getting group Members:
+  getGroupMembers(groupId) async {
+    return groupsCollection.doc(groupId).snapshots();
+  }
+
+  // Search:
+  searchByName(String groupName) {
+    return groupsCollection.where('groupName', isEqualTo: groupName).get();
+  }
 }
